@@ -15,10 +15,13 @@ can only have one setup & run at a time.
 BDIM flow;
 Body body;
 FloodPlot flood;
+float Re = 100;
+int resolution = (int)pow(2,5)
+float nu = resolution / Re;
 
 void setup(){
   size(700,700);                             // display window size
-  int n=(int)pow(2,7);                       // number of grid points
+  int n= resolution * 4;                       // number of grid points
   float L = n/8.;                            // length-scale in grid units
   Window view = new Window(n,n);
 
