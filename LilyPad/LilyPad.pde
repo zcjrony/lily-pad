@@ -16,11 +16,12 @@ BDIM flow;
 //Body body;
 //NACA body;
 Rectangle body;
-
+SaveData dat;
 FloodPlot flood;
+StreamPlot stream;
 float Re = 10;
 int resolution = (int)pow(2,5);
-float omega = 0.05;
+float omega = 0.03;
 float angle = 0;
 float amplitude = PI / 4;
 float theta;
@@ -30,22 +31,25 @@ float rTrace;
 float dtheta;
 float L;
 
+
 void setup(){
   size(700,700);                             // display window size
   int n= resolution * 4;                       // number of grid points
   L = n/8.;                            // length-scale in grid units
   Window view = new Window(n,n);
 
-  //body = new CircleBody(n/3,n/2,L,view);     // define geom
-  //body = new NACA(L, 4 * L, L, 0.20, view);
-  body = new Rectangle(L, 2 * L, L, L / 8, view);
+  body = new Rectangle(2 * L, 2.5 * L, L, L / 8, view);
   flow = new BDIM(n,n,1.5,body);             // solve for flow using BDIM
   flood = new FloodPlot(view);               // initialize a flood plot...
   flood.setLegend("vorticity",-2,2);       //    and its legend
+  stream = new StreamPlot(view, flow, 10);
+  stream.setLegend("stream", -2, 2);
+
+  //dat = new SaveData("pressure.txt",test.foil.fcoords,resolution,xLengths,yLengths,zoom);
 }
 void draw(){
-  centerX = 3.5 * L;
-  centerY = 2 * L;
+  centerX = 4.5 * L;
+  centerY = 2.5 * L;
   rTrace = centerX - L;
   angle += flow.dt * omega;
   theta = amplitude* sin(angle - PI / 2) + amplitude;
@@ -56,6 +60,9 @@ void draw(){
   flow.update(body); flow.update2();         // 2-step fluid update
   flood.display(flow.u.curl());              // compute and display vorticity
   body.display();                            // display the body
+
+  //stream.display(flow.u.curl());
+  //dat.addData(t, test.foil.pressForce(test.flow.p), test.foil, test.flow.p);
 }
 void mousePressed(){body.mousePressed();}    // user mouse...
 void mouseReleased(){body.mouseReleased();}  // interaction methods
