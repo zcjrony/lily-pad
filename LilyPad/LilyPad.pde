@@ -19,7 +19,7 @@ NACA body;
 FloodPlot flood;
 float Re = 10;
 int resolution = (int)pow(2,5);
-float omega = 0.01;
+float omega = 0.005;
 //double time = 0;
 double angle = 0;
 int flag = 1;
@@ -39,9 +39,9 @@ void setup(){
 }
 void draw(){
   //body.follow();                             // update the body
-  if(angle > PI / 2){
+  if(angle > PI / 4){
     flag = -1;
-  }else if(angle < -PI / 2){
+  }else if(angle < -PI / 4){
     flag = 1;
   }
   angle += flag * flow.dt * omega;
