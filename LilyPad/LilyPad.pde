@@ -21,17 +21,19 @@ Rectangle body;
 SaveData dat;
 FloodPlot flood;
 StreamPlot stream;
-int resolution = 16;
-float omega = 0.03;
+int resolution = 32;
+float L = resolution / 2;
+float omega = 0.15;
 float angle = 0;
 float amplitude = PI / 4;
 float theta;
-float centerX;
-float centerY;
-float rTrace;
+float centerX = 4.5 * L;
+float centerY = 2.5 * L;
+float rTrace = centerX - 2 * L;
 float dtheta;
-float L;
 float time = 0;
+float Re = 12000;
+float nu = L * amplitude * omega * rTrace * L / Re;
 PVector force = new PVector(0,0);
 VectorField uinit;
 
@@ -42,20 +44,19 @@ void setup(){
   int n = resolution * 4;                       // number of grid points
   L = n/8;                            // length-scale in grid units
   Window view = new Window(n,n);
-  uinit = new VectorField(n, n, 0, 0);
+  uinit = new VectorField(n + 2, n + 2, 0, 0);
   body = new Rectangle(2 * L, 2.5 * L, L, L / 8, view);
-  //flow = new BDIM(n,n,1e-3,body, uinit ,0, true);             // solve for flow using BDIM
-  //flow = new BDIM(n,n,0.,body,1e-3,true);
-  flow = new BDIM(n,n,0.0128,body);
+  flow = new BDIM(n, n, 0.1, body, uinit, nu, true);             // solve for flow using BDIM
+  //flow = new BDIM(n,n,0,body,1e-3,true);
+  flow = new BDIM(n,n,nu,body);
   flood = new FloodPlot(view);               // initialize a flood plot...
-  flood.setLegend("vorticity",-2,2);       //    and its legend
+  flood.setLegend("vorticity",-10,10);       //    and its legend
   stream = new StreamPlot(view, flow, 10);
   stream.setLegend("stream", -2, 2);
 
-  //dat = new SaveData("pressure.txt",test.foil.fcoords,resolution,xLengths,yLengths,zoom);
 }
 void draw(){
-  centerX = 4.5 * L;
+  centerX = 3.5 * L;
   centerY = 2.5 * L;
   rTrace = centerX - L;
   angle += flow.dt * omega;
